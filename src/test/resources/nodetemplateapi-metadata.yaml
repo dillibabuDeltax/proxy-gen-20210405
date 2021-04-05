@@ -1,0 +1,31 @@
+---
+# Choose the base template for generating proxy
+templateSource: oauth2-v1.0
+
+
+# Metadata for API Proxy. This will be used to update the default.xml and create the <proxyName>.xml in the proxy bundle.
+metadata:
+  proxyName: node-template-v1
+  description: Just a template service.
+  basePath: /node-template
+  virtualHosts:
+    - secure
+    - default
+  targetEndpoints:
+    - node-template
+# This is the target endpoint for a given proxy. Target endpoints are responsible for making the backend calls.
+# Target endpoints also has references to Target servers being utilized, how they are load balanced, etc.
+
+targetEndpoints:
+- name: node-template
+  description: target endpoint pointing to access the node template service
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+      - name: tsr-api-infoarmor-io
+        weightage: 8
+    path: /v0/partner/node-template
+  requestPreflow:
+    - AM.remove.pathsu
+

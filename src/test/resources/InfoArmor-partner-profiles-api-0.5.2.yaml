@@ -1,0 +1,787 @@
+---
+openapi: 3.0.2
+info:
+  title: Partner Profiles API
+  description: |
+    The InfoArmor Partner PANDUSH API is implemented in REST. The API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, headers and verbs.
+  version: 0.5.2
+  x-api-id: 0edf7c20-a1fb-4941-ac25-55c51dc77b19
+  x-audience: external-partner
+servers:
+- url: https://api.dev.infoarmor.io/v0/partner/profiles
+  description: Development Server
+security:
+- bearerAuth: []
+- apiKey: []
+tags:
+- name: Profiles
+  description: Partner API managing a person's profile
+paths:
+  /:
+    get:
+      tags:
+      - Profiles
+      summary: returns list of account's profiles      
+      description: returns list of account's profiless Pandush
+      operationId: fetchPartnerProfiles
+      parameters:
+      - name: phone
+        in: query
+        description: phone number to search for
+        required: false
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          pattern: ^((?!(0))\d{10})$
+          type: string
+      - name: email
+        in: query
+        description: email to search for
+        required: false
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: email
+      - name: family_name
+        in: query
+        description: family name to search for
+        required: false
+        allowEmptyValue: false
+        style: form
+        explode: true
+        schema:
+          pattern: ^([A-Za-z\. -]+)$
+          type: string
+      - name: limit
+        in: query
+        description: The number of profiles to return each time. Default limit is 100
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 100
+      - name: starting_after
+        in: query
+        description: The profiles Id used as a cursor in pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      - name: ending_before
+        in: query
+        description: The profiles Id used as a cursor in pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: paginated list of persons' profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "404":
+          description: Entity with specified ID is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 404
+                message: Resource with given id not found
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+    post:
+      tags:
+      - Profiles
+      summary: create a person profile     
+      description: create a person profile
+      operationId: createPartnerProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        "201":
+          description: profile created
+          headers:
+            Content-Location:
+              description: /profiles/<profile_id>
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: url
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: Request must contain valid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 400
+                message: Invalid request
+                errors: []
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "409":
+          description: Request conflicts with system of record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 409
+                message: A service conflict has occurred
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+  /{profile_id}:
+    get:
+      tags:
+      - Profiles
+      summary: returns a profile by an id     
+      description: returns a profile by an id
+      operationId: fetchPartnerProfileByProfileId
+      parameters:
+      - name: profile_id
+        in: path
+        description: Identifier of the profile
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: person's profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Request must contain valid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 400
+                message: Invalid request
+                errors: []
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "404":
+          description: Entity with specified ID is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 404
+                message: Resource with given id not found
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+    put:
+      tags:
+      - Profiles
+      summary: modify a person's profile
+      description: modify a person's profile      
+      operationId: modifyPartnerProfileByProfileId
+      parameters:
+      - name: profile_id
+        in: path
+        description: Identifier of the profile
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_1'
+      responses:
+        "200":
+          description: person's profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Request must contain valid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 400
+                message: Invalid request
+                errors: []
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "404":
+          description: Entity with specified ID is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 404
+                message: Resource with given id not found
+                errors: []
+        "409":
+          description: Request conflicts with system of record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 409
+                message: A service conflict has occurred
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+    delete:
+      tags:
+      - Profiles
+      summary: Delete a given profile not associated with a subscription
+      description: Delete a given profile not associated with a subscription
+      operationId: deletePartnerProfileByProfileId
+      parameters:
+      - name: profile_id
+        in: path
+        description: Identifier of the profile
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Profile successfully deleted
+        "400":
+          description: Request must contain valid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 400
+                message: Invalid request
+                errors: []
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "404":
+          description: Entity with specified ID is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 404
+                message: Resource with given id not found
+                errors: []
+        "409":
+          description: Request conflicts with system of record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 409
+                message: A service conflict has occurred
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+  /{profile_id}/history:
+    get:
+      tags:
+      - Profiles
+      summary: Returns the history of the profile with the given ID.
+      description: Returns the the history of the profile with the given ID.
+      operationId: fetchPartnerProfileHistory
+      parameters:
+      - name: profile_id
+        in: path
+        description: Identifier of the profile
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful get of the specified profile's history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileHistory'
+        "401":
+          description: Authorization is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 401
+                message: Invalid JWT
+                errors: []
+        "403":
+          description: Resource access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 403
+                message: Resource is not accessible
+                errors: []
+        "404":
+          description: Entity with specified ID is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 404
+                message: Resource with given id not found
+                errors: []
+        "500":
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                timestamp: 2020-08-17T18:30:38.954Z
+                status: 500
+                message: An unexpected error has occurred
+                errors: []
+components:
+  schemas:
+    Error:
+      required:
+      - errors
+      - message
+      - status
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: datetime
+        status:
+          type: integer
+        errors:
+          type: array
+          items: {}
+        message:
+          type: string
+    Profile:
+      required:
+      - email
+      - family_name
+      - given_name
+      type: object
+      properties:
+        given_name:
+          maxLength: 40
+          minLength: 1
+          type: string
+          description: The person's given name.
+        additional_name:
+          maxLength: 30
+          type: string
+          description: The person's secondary name.
+          nullable: true
+        family_name:
+          maxLength: 40
+          minLength: 1
+          type: string
+          description: The person's family name.
+        preferred_name:
+          maxLength: 40
+          type: string
+          description: How the individual prefers to be addressed.
+          nullable: true
+        ssn:
+          pattern: ^(?!000|666)[0-8][0-9]{2}-?(?!00)[0-9]{2}-?(?!0000)[0-9]{4}$
+          type: string
+          description: The person's Social Security Number.
+          nullable: true
+        phone:
+          pattern: ^((?!(0))\d{10})$
+          type: string
+          description: The person's primary phone number.
+          nullable: true
+        email:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: The email address associated with the profile, must be unique.
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+        date_of_birth:
+          type: string
+          description: The person's birth date.
+          format: date
+          nullable: true
+    ProfileResponse:
+      type: object
+      description: Profile response
+      allOf:
+      - type: object
+        properties:
+          profile_id:
+            type: string
+            description: The profile's unique identifier
+          subscription_id:
+            type: string
+            description: The subscription profile is subscribed unique identifier
+            format: uuid
+            nullable: true
+          timestamp:
+            type: string
+            description: The timestamp of when was recorded
+            format: date-time
+          member_since_time:
+            type: string
+            description: The time when a person first becomes a paying customers
+            format: date-time
+            nullable: true
+      - $ref: '#/components/schemas/Profile'
+    Address:
+      type: object
+      properties:
+        street:
+          maxLength: 100
+          type: string
+          description: The street address
+          nullable: true
+        locality:
+          maxLength: 40
+          type: string
+          description: The city or town
+          nullable: true
+        region:
+          pattern: ^((A[LKSZR])|(C[AOT])|(D[EC])|(F[ML])|(G[AU])|(HI)|(I[DLNA])|(K[SY])|(LA)|(M[EHDAINSOT])|(N[EVHJMYCD])|(MP)|(O[HKR])|(P[WAR])|(RI)|(S[CD])|(T[NX])|(UT)|(V[TIA])|(W[AVIY]))$
+          type: string
+          description: The state (if in the U.S.)
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        postal_code:
+          maxLength: 10
+          minLength: 5
+          pattern: (^\d{5}$)|(^\d{9}$)|(^\d{5}-\d{4}$)
+          type: string
+          nullable: true
+      description: The person's address
+      nullable: true
+    ProfileHistory:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileResponse'
+    inline_response_200:
+      type: object
+      properties:
+        has_more:
+          type: boolean
+        last_profile_fetched:
+          type: string
+          example: c07f459c-0cca-4072-9f24-b45a249002f9
+        profiles:
+          type: array
+          items:
+            allOf:
+            - type: object
+              properties:
+                profile_id:
+                  type: string
+            - $ref: '#/components/schemas/ProfileResponse'
+    body:
+      allOf:
+      - $ref: '#/components/schemas/Profile'
+      - type: object
+        properties:
+          profile_id:
+            type: string
+    inline_response_201:
+      type: object
+      properties:
+        profile_id:
+          type: string
+          example: 0baa4eff-f2a1-46c0-903f-373fe6d39058
+    inline_response_200_1:
+      allOf:
+      - $ref: '#/components/schemas/ProfileResponse'
+    body_1:
+      required:
+      - additional_name
+      - address
+      - date_of_birth
+      - phone
+      - preferred_name
+      - ssn
+      allOf:
+      - $ref: '#/components/schemas/Profile'
+  responses:
+    BadRequest:
+      description: Request must contain valid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 400
+            message: Invalid request
+            errors: []
+    Unauthorized:
+      description: Authorization is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 401
+            message: Invalid JWT
+            errors: []
+    Forbidden:
+      description: Resource access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 403
+            message: Resource is not accessible
+            errors: []
+    NotFound:
+      description: Entity with specified ID is not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 404
+            message: Resource with given id not found
+            errors: []
+    Conflict:
+      description: Request conflicts with system of record.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 409
+            message: A service conflict has occurred
+            errors: []
+    InternalServer:
+      description: Unexpected error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: 2020-08-17T18:30:38.954Z
+            status: 500
+            message: An unexpected error has occurred
+            errors: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKey:
+      type: apiKey
+      name: X-Api-Key
+      in: header

@@ -1,0 +1,721 @@
+openapi: 3.0.0
+info:
+  title: Partner APIs
+  description: Partner Profile.  You can find out more about the API program at [https://developer.example.com](https://developer.example.com). 
+  contact:
+    email: apiteam@example.com
+  version: '1.0'
+servers:
+- url: https://dev1-api.example.com
+  description: Development environment
+- url: https://sit1-api.example.com
+  description: Integration environment
+- url: https://sandbox-api.example.com
+  description: Sandbox environment
+- url: https://api.example.com
+  variables: {}
+paths:
+  /ipaas/v1/partner/profile:
+    post:
+      tags:
+      - "Partner Profiles"
+      summary: "Partner Profiles"
+      description: "Partner Profiles."
+      requestBody:
+        description: ""
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#/components/schemas/profileRequest"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/profileResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: "0005"
+                statusDescription: Resource no longer available
+                fault:
+                  title: ipaas.partner.NOT_FOUND
+                  field: Resource Not Found
+        405:
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 5012
+                statusDescription: Method not allowed. Please refer the developer portal to ensure you are building to specifications.
+                fault:
+                  title: ipaas.partner.METHOD_NOT_ALLOWED
+                  field: Method not allowed
+        422:
+          description: Unprocessable  Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 1111
+                statusDescription: Business rules not parsed completely. Please try again.
+                fault:
+                  title: ipaas.partner.UNPROCESSABLE_ENTITY
+                  field: Business rules not parsed completely.       
+        429:
+          description: Too much traffic
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/error'
+             example:
+                statusCode: 9876
+                statusDescription: We have detected excessive traffic coming from this IP. Please reach out if you think this is incorrect.
+                fault:
+                  title: ipaas.partner.TOO_MANY_REQUESTS
+                  field: We have detected excessive traffic coming from this IP                
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error503'
+        default:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorDefault'
+      deprecated: false
+      security:
+        - OAuth2: ['urn:example:ipaas:partner:profile:read']
+  /ipaas/v1/partner/enrollment:
+    get:
+      tags:
+      - "Partner Enrollments"
+      summary: "Partner Enrollment"
+      description: "Partner Enrollment"
+      parameters:
+      - name:  ids
+        in: query
+        description: ""
+        required: true
+        schema:
+          type: string
+          example: "00020,00021"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/enrollmentResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: "0005"
+                statusDescription: Resource no longer available
+                fault:
+                  title: ipaas.partner.NOT_FOUND
+                  field: Resource Not Found
+        405:
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 5012
+                statusDescription: Method not allowed. Please refer the developer portal to ensure you are building to specifications.
+                fault:
+                  title: ipaas.partner.METHOD_NOT_ALLOWED
+                  field: Method not allowed
+        422:
+          description: Unprocessable  Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 1111
+                statusDescription: Business rules not parsed completely. Please try again.
+                fault:
+                  title: ipaas.partner.UNPROCESSABLE_ENTITY
+                  field: Business rules not parsed completely.       
+        429:
+          description: Too much traffic
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/error'
+             example:
+                statusCode: 9876
+                statusDescription: We have detected excessive traffic coming from this IP. Please reach out if you think this is incorrect.
+                fault:
+                  title: ipaas.partner.TOO_MANY_REQUESTS
+                  field: We have detected excessive traffic coming from this IP                
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error503'
+        default:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorDefault'
+      deprecated: false
+      security:
+        - OAuth2: ['urn:example:ipaas:partner:enrollment:read'] 
+  /ipaas/v1/partner/account:
+    post:
+      tags:
+      - "Partner Accounts"
+      summary: "Partner Account"
+      description: "Partner Account"
+      requestBody:
+        description: ""
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/accountRequest"
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/accountResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+              example:
+                statusCode: 1101
+                statusDescription: At least one of the request parameters needs to be provided. Please refer the developer portal to ensure you are building to specifications.
+                fault: 
+                  type: ipaas.partner.INVALID_DATA
+                  title: missing/incorrect input request
+                  errors:
+                    - type: ipaas.partner.REQUIRED_FIELD_MISSING
+                      title: must not be empty
+                      field: prescriptions.rxList
+                    - type: ipaas.partner.REQUIRED_FIELD_MISSING
+                      title: must not be empty
+                      field: prescriptions.storeInfo.storeID  
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: "0005"
+                statusDescription: Resource no longer available
+                fault:
+                  title: ipaas.partner.NOT_FOUND
+                  field: Resource Not Found
+        405:
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 5012
+                statusDescription: Method not allowed. Please refer the developer portal to ensure you are building to specifications.
+                fault:
+                  title: ipaas.partner.METHOD_NOT_ALLOWED
+                  field: Method not allowed
+        422:
+          description: Unprocessable  Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                statusCode: 1111
+                statusDescription: Business rules not parsed completely. Please try again.
+                fault:
+                  title: ipaas.partner.UNPROCESSABLE_ENTITY
+                  field: Business rules not parsed completely.       
+        429:
+          description: Too much traffic
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/error'
+             example:
+                statusCode: 9876
+                statusDescription: We have detected excessive traffic coming from this IP. Please reach out if you think this is incorrect.
+                fault:
+                  title: ipaas.partner.TOO_MANY_REQUESTS
+                  field: We have detected excessive traffic coming from this IP                
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error503'
+        default:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorDefault'
+      deprecated: false
+      security:
+       - OAuth2: ['urn:example:ipaas:partner:guest:create']
+components:
+  schemas:
+    accountRequest:
+      required:
+        - accountInfo
+      properties: 
+        accountInfo:
+          $ref: '#/components/schemas/accountInfo'      
+    accountInfo:
+      required: 
+        - firstName
+        - lastName
+        - emailAddress
+      type: object
+      description: Account info for email confirmation.
+      properties:
+        firstName:
+          type: string
+          description: Account First Name
+          example: John
+        lastName:
+          type: string
+          description: Account Last Name
+          example: John  
+        emailAddress:
+          type: string
+          format: email
+          pattern: ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+          description: "This field provides the account email address"
+    accountResponse:
+      type: object
+      properties:
+        statusDescription:
+          type: string
+          description: A human readable description of the status code.
+          example: Success
+        statusCode:
+          type: string
+          description: Status code is used to determine how the downstream system responds to the request and/or what went wrong.
+          example: "0000"
+        accountInfo:
+          $ref: '#/components/schemas/accountInfo'   
+    profileRequest:
+      required:
+        - profileNumber
+        - profileID
+      properties:
+        profileNumber:
+          type: string
+          description: The profile number
+          example: "20"
+        profileID:
+          type: string
+          description: The profileID 
+          example: "0045"
+    profileResponse:
+      type: object
+      properties:
+        statusDescription:
+          type: string
+          description: A human readable description of the status code.
+          example: Success
+        statusCode:
+          type: string
+          description: Status code is used to determine how the downstream system responds to the request and/or what went wrong.
+          example: "0000"
+        profileID:
+          type: string
+          description: The profileID 
+          example: "20"  
+        date:
+          type: string
+          description: The date.
+        status:
+          type: string
+          description: The status
+          example: "In Process"   
+    enrollmentResponse:
+      type: object
+      properties:
+        statusTitle:
+          type: string
+          example: "Success"
+        statusCode:
+          type: string
+          example: "0000"
+        statusDescription:
+          type: string
+          example: "Success"
+      required:
+      - statusTitle
+      - statusCode
+      - statusDescription
+      - stores
+    error:
+      required:
+      - statusCode
+      - statusDescription
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          format: int32
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+        fault:
+            $ref: '#/components/schemas/faultSection'
+    faultSection:
+      title: Fault section to be sent only whwen there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.INTERNAL_SERVER_ERROR"
+        title:
+          type: string
+          description: The overall title of the error being sent back
+          example: "Internal Server Error."
+    error400:
+     # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      - fault
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "1001"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: At least one of the request parameters needs to be provided. Please refer the developer portal to ensure you are building to specifications.
+        fault:
+            $ref: '#/components/schemas/faultSection400'
+    faultSection400:
+      title: Fault section to be sent only when there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      - detail
+      - errors
+      type: object
+      properties:
+        type:
+          type: string
+          description: fault description
+          example: ipaas.partner.INVALID_DATA
+        title:
+          type: string
+          description: supply of the drug prescribed
+          example: missing/incorrect input request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/errorsDetails400'
+    errorsDetails400:
+      title: Get the details of the error that happened
+      required:
+      - type
+      - title
+      - field
+      type: object
+      example:
+      - type: ipaas.partner.REQUIRED_FIELD_MISSING
+        title: must not be empty
+        field: profileNumber
+      - type: ipaas.partner.REQUIRED_FIELD_MISSING
+        title: must not be empty
+        field: storeID
+      - type: ipaas.partner.INVALID_DATA
+        title: Partner Id must be alpha numeric.
+        field: partnerID
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+        title:
+          type: string
+          description: Field not found
+        field:
+          type: string
+          description: Overall decription of the error
+    error401:
+     # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      - fault
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "1000"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: Looks like you are not authorized to use this API.
+        fault:
+            $ref: '#/components/schemas/faultSection401'
+    faultSection401:
+      title: Fault section to be sent only whwen there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      - detail
+      - errors
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.UNAUTHORIZED"
+        title:
+          type: string
+          description: The overall title of the error being sent back
+          example: "Un Authorized."
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/errorsDetails401'
+    errorsDetails401:
+      title: Get the details of the error that happened
+      required:
+      - type
+      - title
+      - field
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.BEARER_TOKEN_NOT_FOUND"
+        title:
+          type: string
+          description: Field not found
+          example: "Bearer Token Not Found"
+        field:
+          type: string
+          description: Overall decription of the error
+          example: "Bearer Token"
+    error404:
+     # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "0005"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: Resource no longer available
+    error500:
+      # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      - fault
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "9999"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: An Unexpected error occurred while fulfilling this request. Our engineers have been notified. Please try again in some time.
+        fault:
+            $ref: '#/components/schemas/faultSection500'
+    faultSection500:
+      title: Fault section to be sent only whwen there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      - detail
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.INTERNAL_SERVER_ERROR"
+        title:
+          type: string
+          description: The overall title of the error being sent back
+          example: "Internal Server Error."
+    error503:
+     # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      - fault
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "5000"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: Looks like our servers are under maintenance. Please try again in some time.
+        fault:
+            $ref: '#/components/schemas/faultSection503'
+    faultSection503:
+      title: Fault section to be sent only when there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.SERVICE_DOWN"
+        title:
+          type: string
+          description: The overall title of the error being sent back
+          example: "Looks like the service is down."
+    errorDefault:
+      # the details of the fault section being sent
+      title: Response of the Partner Information API
+      required:
+      - statusCode
+      - statusDescription
+      - fault
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: Status code is used to determine what went wrong and/or how the downstream system responds to the request
+          example: "9998"
+        statusDescription:
+          type: string
+          description: A human readable description of the status code
+          example: An Unexpected error occurred while fulfilling this request. Our engineers have been notified. Please try again in some time.
+        fault:
+            $ref: '#/components/schemas/faultSectionDefault'
+    faultSectionDefault:
+      title: Fault section to be sent only whwen there is an error
+      description: To be included only if there are any errors
+      required:
+      - type
+      - title
+      - detail
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the error to be sent back
+          example: "ipaas.partner.INTERNAL_SERVER_ERROR"
+        title:
+          type: string
+          description: The overall title of the error being sent back
+          example: "Internal Server Error."  
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: "/oauth2/v1/token"
+          scopes:
+            urn:example:ipaas:partner:profile:read: Grants access to perform partner profile
+            urn:example:ipaas:partner:enrollment:read: Grants access to perform enrollment
+            urn:example:ipaas:partner:guest:create: Grants access to perform account

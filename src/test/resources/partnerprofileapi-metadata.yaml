@@ -1,0 +1,41 @@
+---
+# Choose the base template for generating proxy
+templateSource: oauth2-v1.0
+
+
+# Metadata for API Proxy. This will be used to update the default.xml and create the <proxyName>.xml in the proxy bundle.
+metadata:
+  proxyName: httpbin
+  description: These APIs featurize the partner profile capability of Example.  You can find out more about the API program at [https://developer.example.com](https://developer.example.com).
+  basePath: /ipaas/v1/partner/profiles
+  virtualHosts:
+    - secure
+  targetEndpoints:
+    - SpringBootRKE-partner-profiles
+    - mock-partner-profiles
+# This is the target endpoint for a given proxy. Target endpoints are responsible for making the backend calls.
+# Target endpoints also has references to Target servers being utilized, how they are load balanced, etc.
+
+targetEndpoints:
+- name: mock-partner-profiles
+  description: target endpoint pointing to mock server for partner profile
+  routeRule: ((request.header.x-mock == "y") OR (request.header.x-mock == "Y")) AND (proxy.pathsuffix MatchesPath "/profile")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-api-infoarmor-io
+      weightage: 8
+    path: /ipaas-mock/v0/partner/profiles
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-partner-profiles
+  description: spring boot RKE Target endpoint for partner profile and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/profile")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-api-infoarmor-io
+      weightage: 8
+    path: /v0/partner/profiles
+  requestPreflow:
+    - AM.remove.pathsuffix

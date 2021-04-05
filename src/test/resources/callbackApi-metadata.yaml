@@ -1,0 +1,62 @@
+---
+# Choose the base template for generating proxy
+templateSource: oauth2-v1.0
+
+
+# Metadata for API Proxy. This will be used to update the default.xml and create the <proxyName>.xml in the proxy bundle.
+metadata:
+  proxyName: callback
+  description: These APIs featurize the callback  capability.  You can find out more about the API program at [https://developer.example.com](https://developer.example.com).
+  basePath: /apis/callback/v1
+  virtualHosts:
+    - vh-digitalfootprint-infoarmor.com
+  targetEndpoints:   
+    - mock-callback
+    - SpringBootRKE-callback
+    - SpringBootRKE-xMatters 
+# This is the target endpoint for a given proxy. Target endpoints are responsible for making the backend calls.
+# Target endpoints also has references to Target servers being utilized, how they are load balanced, etc.
+
+targetEndpoints:
+- name: mock-callback
+  description: target endpoint pointing to mock server for callback api
+  routeRule: (request.header.x-mock == "y") OR (request.header.x-mock == "Y") 
+  timeouts:
+  - name: io.timeout.millis
+    value: 10000
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-api-mock-infoarmor.io
+      weightage: 8
+    path: /infoarmor-mock/microservices/callback/v1
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-callback
+  description: spring boot RKE Target endpoint for callback and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y")   AND !(proxy.pathsuffix MatchesPath "/xMatters")
+  timeouts:
+  - name: io.timeout.millis
+    value: 12000
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-pd.allstate.com
+      weightage: 8
+    path: /sg/b2b/ComputeServices/FORE/unityevents/event
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-xMatters
+  description: spring boot RKE Target endpoint for callback and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/xMatters")
+  timeouts:
+  - name: io.timeout.millis
+    value: 12000
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-api-mock-infoarmor.io
+      weightage: 8
+    path: /infoarmor-mock/microservices/callback/v1
+  requestPreflow:
+    - AM.remove.pathsuffix

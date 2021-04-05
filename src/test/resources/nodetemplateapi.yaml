@@ -1,0 +1,232 @@
+openapi: 3.0.2
+info:
+  description: |
+    Node template service to be used a sandbox
+  version: 0.3.0
+  title: Partner Node Template API
+  contact:
+    name: Partner API Team
+    url: https://api.infoarmor.com
+    email: partnerapis@infoarmor.com
+  x-api-id: 9433d5be-def7-486f-a427-766a01ff1e7f
+  x-audience: internal-component
+servers:
+- url: https://api.dev.infoarmor.io/v0/partner/node-template/
+  description: Development environment
+paths:
+  /api:
+    get:
+      tags:
+        - Api
+      summary: Gets api status
+      description: Returns the api status Edit this line.
+      responses:
+        200:
+          $ref: "#/components/responses/ApiResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServer"
+  /slow:
+    get:
+      tags:
+        - Api
+      summary: Gets slow status
+      description: Returns the api slow status.
+      responses:
+        200:
+          $ref: "#/components/responses/ApiResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServer"
+  /error:
+    get:
+      tags:
+        - Api
+      summary: Gets error status
+      description: Returns the api error status.
+      responses:
+        200:
+          $ref: "#/components/responses/ApiResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServer"
+  /bad:
+    get:
+      tags:
+        - Api
+      summary: Gets bad status
+      description: Returns the api bad status.
+      responses:
+        200:
+          $ref: "#/components/responses/ApiResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServer"
+components:
+  responses:
+    ApiResponse:
+      description: The api response.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ApiResponse"
+              - type: string
+    BadRequest:
+      description: Request must contain valid parameters.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 400
+            message: Validation Error
+            errors: [
+            {
+              "message": "A payload parameter is not valid"
+            }
+            ]
+    Unauthorized:
+      description: Authorization is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 401
+            message: Not authorized to access resource
+            errors: []
+    Forbidden:
+      description: Resource access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 403
+            message: Forbidden to access resource
+            errors: []
+    NotFound:
+      description: Entity with specified ID is not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 404
+            message: Service or resource not found
+            errors: []
+    Conflict:
+      description: Request conflicts with system of record.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 409
+            message: A downstream service/resource has a request conflict
+            errors: []
+    InternalServer:
+      description: Unexpected error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            timestamp: "2020-04-23T06:10:19.664Z"
+            status: 500
+            message: Unexpected Error
+            errors: []
+  schemas:
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+          example: []
+      required:
+        - timestamp
+        - status
+        - message
+        - errors
+    AccountsMapping:
+      type: object
+      properties:
+        account_id:
+          type: string
+          format: uuid
+      required:
+        - account_id
+    AlertsMapping:
+      type: object
+      properties:
+        profile_id:
+          type: string
+          format: uuid
+        alert_id:
+          type: string
+          format: uuid
+        provider_type:
+          type: string
+          enum: [hrt, thm, crm, smm, dwm]
+      required:
+        - profile_id
+        - alert_id
+        - provider_type
+    ApiResponse:
+      type: string
+    ProfilesMapping:
+      type: object
+      properties:
+        profile_id:
+          type: string
+          format: uuid
+      required:
+        - profile_id
+    SubscriptionsMapping:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+          format: uuid
+      required:
+        - subscription_id
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: "/oauth2/v1/token"
+          scopes:
+            urn:example:ipaas:partner:profile:read: Grants access to perform partner profile
+            urn:example:ipaas:partner:enrollment:read: Grants access to perform enrollment
+            urn:example:ipaas:partner:guest:create: Grants access to perform account

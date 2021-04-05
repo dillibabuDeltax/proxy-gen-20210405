@@ -1,0 +1,104 @@
+---
+# Choose the base template for generating proxy
+templateSource: oauth2-v1.0
+
+
+# Metadata for API Proxy. This will be used to update the default.xml and create the <proxyName>.xml in the proxy bundle.
+metadata:
+  proxyName: ipaas-partner-v1
+  description: These APIs featurize the Prescription capability of Example.  You can find out more about the API program at [https://developer.example.com](https://developer.example.com).
+  basePath: /ipaas/v1/partner
+  virtualHosts:
+    - secure
+  targetEndpoints:
+    - mock-partner-accounts
+    - SpringBootRKE-partner-accounts
+    - mock-partner-enrollments
+    - SpringBootRKE-partner-enrollments
+    - SpringBootRKE-partner-profiles
+    - mock-partner-profiles
+# This is the target endpoint for a given proxy. Target endpoints are responsible for making the backend calls.
+# Target endpoints also has references to Target servers being utilized, how they are load balanced, etc.
+
+targetEndpoints:
+- name: mock-partner-accounts
+  description: target endpoint pointing to mock server for partner account
+  routeRule: ((request.header.x-mock == "y") OR (request.header.x-mock == "Y")) AND (proxy.pathsuffix MatchesPath "/partner/account")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path: /ipaas-mock/microservices/v1/partner/account
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-partner-accounts
+  description: spring boot RKE Target endpoint for partner account and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/partner/partner")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path: /microservices-rke/microservices/ipaas/v1/partner/account
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: mock-partner-enrollments
+  description: target endpoint pointing to mock server for partner enrollment
+  routeRule: ((request.header.x-mock == "y") OR (request.header.x-mock == "Y")) AND (proxy.pathsuffix MatchesPath "/pickuptime")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path:  /ipaas-mock/microservices/v1/partner/enrollment
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-partner-enrollments
+  description: spring boot RKE Target endpoint for partner enrollment and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/pickuptime")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path:  /microservices-rke/microservices/ipaas/v1/partner/enrollment
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: mock-partner-profiles
+  description: target endpoint pointing to mock server for partner profile
+  routeRule: ((request.header.x-mock == "y") OR (request.header.x-mock == "Y")) AND (proxy.pathsuffix MatchesPath "/isrefillable")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path: /ipaas-mock/microservices/v1/partner/profile
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-partner-profiles
+  description: spring boot RKE Target endpoint for partner profile and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/isrefillable")
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: ipaas-gateway-east
+      weightage: 8
+    - name: ipaas-gateway-west
+      weightage: 2
+    path: /microservices-rke/microservices/ipaas/v1/partner/profile
+  requestPreflow:
+    - AM.remove.pathsuffix
+
+git:
+  repoUrl: https://github.com/dillibabuDeltax/partnerprofileapi.git

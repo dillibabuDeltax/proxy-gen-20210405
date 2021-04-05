@@ -1,0 +1,47 @@
+---
+# Choose the base template for generating proxy
+templateSource: oauth2-v1.0
+
+
+# Metadata for API Proxy. This will be used to update the default.xml and create the <proxyName>.xml in the proxy bundle.
+metadata:
+  proxyName: apigee-mock
+  description: These APIs featurize the partner profile capability of Example.  You can find out more about the API program at [https://developer.example.com](https://developer.example.com).
+  basePath: /v1/apigeemock
+  virtualHosts:
+    - secure
+  targetEndpoints:
+    - SpringBootRKE-apigeemock
+    - mock-apigeemock
+# This is the target endpoint for a given proxy. Target endpoints are responsible for making the backend calls.
+# Target endpoints also has references to Target servers being utilized, how they are load balanced, etc.
+
+targetEndpoints:
+- name: mock-apigeemock
+  description: target endpoint pointing to mock server for apigee_mock
+  routeRule: ((request.header.x-mock == "y") OR (request.header.x-mock == "Y")) AND (proxy.pathsuffix MatchesPath "/*")
+  timeouts:
+  - name: io.timeout.millis
+    value: 10000
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-apigee-mock.net
+      weightage: 8
+    path: /
+  requestPreflow:
+    - AM.remove.pathsuffix
+- name: SpringBootRKE-apigeemock
+  description: spring boot RKE Target endpoint for  apigge_mock and this connects to East and West
+  routeRule: (request.header.x-mock != "y") AND (request.header.x-mock != "Y") AND (proxy.pathsuffix MatchesPath "/*")  
+  timeouts:
+  - name: io.timeout.millis
+    value: 12000
+  loadBalancerConfig:
+    algorithm: Weighted
+    targetServers:
+    - name: tsr-api-infoarmor-apigeemock-io
+      weightage: 8
+    path: /
+  requestPreflow:
+    - AM.remove.pathsuffix

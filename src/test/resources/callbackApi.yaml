@@ -1,0 +1,77 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Sandbox Environment 
+    url:  https://api-sandbox.infoarmor.com
+  - description: Development Environment 
+    url:  https://api-dev.infoarmor.com
+info:
+  description: This is a callback API 
+  version: "1.0.0"
+  title: Callback API
+  contact:
+    email: api-support@infoarmor.com
+tags:
+  - name: AlertCallback
+    description: Any service can use this as callback api url(webhook) to send alert
+  - name: DataDogCallback
+    description: DataDog service use this as callback api url(webhook) to send alert
+paths:
+  /apis/callback/v1/alert:
+    post:
+      tags:
+        - AlertCallback
+      summary: receives callback from any service for alert
+      operationId: AlertCallback
+      description: receives callback from any service for alert
+      responses:
+        '201':
+          description: alert recevied
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackItem'
+        description: Callback Item
+  /apis/callback/v1/datadog-alert:
+    post:
+      tags:
+        - DataDogCallback
+      summary: receives callback from datadog for alert
+      operationId: DatadogAlet
+      description: receives callback from datadog for alert
+      responses:
+        '201':
+          description: alert recevied
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackItem'
+        description: Callback Item 
+  /apis/callback/v1/xMatters:
+    post:
+      tags:
+        - xMattersSendAlert
+      summary: sends alert from Apigee to xMatters by using this api as webhook
+      operationId: xMattersSendAlert
+      description: send alert to xMatters from Apigee
+      responses:
+        '201':
+          description: alert send
+        '400':
+          description: 'invalid input, object invalid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackItem'
+        description: alert Item 
+components:
+  schemas:
+    CallbackItem:
+      type: object
