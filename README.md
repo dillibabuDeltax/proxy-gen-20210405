@@ -12,7 +12,7 @@ java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/partnerprofileap
 java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/apigee-mock-metadata.yaml src/test/resources/apigee-mock.yaml apigee-mockWorkDir
 
 java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/callbackApi-metadata.yaml src/test/resources/callbackApi.yaml callbackApiWorkDir
-java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/InfoArmor-partner-profiles-api-0.5.2-metadata.yaml src/test/resources/InfoArmor-partner-profiles-api-0.5.2.yaml InfoArmor-partner-profiles-api-0.5.2PandushWorkDir
+java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/partner-profiles-api-0.5.2-metadata.yaml src/test/resources/partner-profiles-api-0.5.2.yaml partner-profiles-api-0.5.2PandushWorkDir
 java -jar target/proxygen-0.0.1-SNAPSHOT.jar src/test/resources/nodetemplateapi-metadata.yaml src/test/resources/nodetemplateapi.yaml nodetemplateapi-WorkDir
 
 
